@@ -31,10 +31,14 @@ class NN:
         return ypred
 
     def get_weights(self):
-        res = []
-        for i,layer in enumerate(self.network):
-            res.append(layer)
-        return self.network
+        w=list()
+        for layer in self.network:
+            lw=list()
+            for node in layer:
+                lw.append(node["weights"])
+            w.append(lw)
+        return w
+        
     # ==============================
     #
     # Internal functions

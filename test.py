@@ -72,5 +72,3 @@ for i, idx_valid in enumerate(idx_folds):
 # Print results
 print("  -> acc_train_avg = {:.2f}%, acc_valid_avg = {:.2f}%".format(
     sum(acc_train)/float(len(acc_train)), sum(acc_valid)/float(len(acc_valid))))
-
-
