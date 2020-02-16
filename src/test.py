@@ -25,7 +25,8 @@ seed_weights = 1 # seed for NN weight initialization
 print("Reading '{}'...".format(csv_filename))
 X, y, n_classes = utils.read_csv(csv_filename, target_name="y", normalize=True)
 print(" -> X.shape = {}, y.shape = {}, n_classes = {}\n".format(X.shape, y.shape, n_classes))
-N, d = X.shape
+oX = np.hsplit(X,7)[0]
+N, d = oX.shape
 
 print("Neural network model:")
 print(" input_dim = {}".format(d))
@@ -71,3 +72,5 @@ for i, idx_valid in enumerate(idx_folds):
 # Print results
 print("  -> acc_train_avg = {:.2f}%, acc_valid_avg = {:.2f}%".format(
     sum(acc_train)/float(len(acc_train)), sum(acc_valid)/float(len(acc_valid))))
+
+

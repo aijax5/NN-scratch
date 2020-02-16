@@ -30,6 +30,11 @@ class NN:
         ypred = np.array([np.argmax(self._forward_pass(x_)) for x_ in X], dtype=np.int)
         return ypred
 
+    def get_weights(self):
+        res = []
+        for i,layer in enumerate(self.network):
+            res.append(layer)
+        return self.network
     # ==============================
     #
     # Internal functions
@@ -99,9 +104,13 @@ class NN:
             else: inputs = [node_['output'] for node_ in self.network[i-1]]
             # Update weights
             for node in layer:
+                # print(len(node), " **********")
                 for j, input in enumerate(inputs):
                     # dw = - learning_rate * (error * transfer') * input
+                    # print("******* ",len(node),"  -  ",j)
                     node['weights'][j] += - eta * node['delta'] * input
+
+    
 
     # Dot product
     def _dotprod(self, a, b):
