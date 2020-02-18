@@ -37,7 +37,7 @@ class NN:
             for node in layer:
                 lw.append(node["weights"])
             w.append(lw)
-        return w
+        return np.array(w)
         
     # ==============================
     #
