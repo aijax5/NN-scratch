@@ -1,4 +1,4 @@
-# Coding up a Neural Network classifier from scratch
+# Modifying a Neural Network classifier to train on Horizontally split Training sets and Aggregate those models
 
 <p align="center">
 <img src="https://github.com/ankonzoid/NN-from-scratch/blob/master/images/NN.png" width="50%">
