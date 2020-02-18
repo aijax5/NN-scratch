@@ -35,8 +35,8 @@ class NN:
         for layer in self.network:
             lw=list()
             for node in layer:
-                lw.append(node["weights"])
-            w.append(lw)
+                lw.append(np.asarray(node["weights"], dtype=np.float32))
+            w.append(np.asarray(lw, dtype=np.float32))
         return np.array(w)
         
     # ==============================
@@ -47,8 +47,8 @@ class NN:
 
     # Build fully-connected neural network (no bias terms)
     def _build_network(self, seed=1):
-        random.seed(seed)
-
+        from datetime import datetime
+        random.seed(datetime.now())
         # Create a single fully-connected layer
         def _layer(input_dim, output_dim):
             layer = []
