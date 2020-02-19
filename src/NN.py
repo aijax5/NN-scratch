@@ -58,8 +58,8 @@ class NN:
             layer = []
             for _ in range(output_dim):
                 if type(Avgweight) == np.ndarray:
-                    weights = Avgweight.tolist()
-                   
+                    # weights = [ w for w in rx for rx in  ]
+                    weights =sum(Avgweight.tolist(), [])
                 else :
                     weights = [random.random() for _ in range(input_dim)] # sample N(0,1)
                 node = {"weights": weights, # list of weights
@@ -143,7 +143,8 @@ class NN:
 
     # Dot product
     def _dotprod(self, a, b):
-        return sum([a_ * b_ for (a_, b_) in zip(a, b)])
+        print(a,b,"***^^ \n")
+        return sum([float(a_ )* float(b_) for (a_, b_) in zip(a, b)])
 
     # Sigmoid (activation function)
     def _sigmoid(self, x):
