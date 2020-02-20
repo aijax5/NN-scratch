@@ -5,10 +5,18 @@
 """
 import numpy as np
 import pandas as pd
+from sklearn.utils import shuffle
+from datetime import  datetime
 
 # Read csv file for (X, y, n_classes) data
 def read_csv(csv_filename, target_name="y", normalize=False):
     df = pd.read_csv(csv_filename, delimiter=",", dtype={target_name: str})
+    #shuffling data
+    df = shuffle(df)
+    # resetting indices
+    df.reset_index(drop=True, inplace= True )
+    
+    # df
     if list(df.columns.values).count(target_name) != 1: # check target
         raise Exception("Need exactly 1 count of '{}' in {}".format(target_name, csv_filename))
     target2idx = {target: idx for idx, target in enumerate(sorted(list(set(df[target_name].values))))}
@@ -22,8 +30,8 @@ def read_csv(csv_filename, target_name="y", normalize=False):
     return X, y, n_classes
 
 # Randomly permute [0,N] and extract indices for each fold
-def crossval_folds(N, n_folds, seed=1):
-    np.random.seed(seed)
+def crossval_folds(N, n_folds):
+    np.random.seed(datetime.now())
     idx_all_permute = np.random.permutation(N)
     N_fold = int(N/n_folds)
     idx_folds = []

@@ -5,6 +5,7 @@
 """
 import math, random
 import numpy as np
+from datetime import datetime
 
 class NN:
 
@@ -51,7 +52,7 @@ class NN:
 
     # Build fully-connected neural network (no bias terms)
     def _build_network(self,AvgWeights=None):
-        from datetime import datetime
+        
         random.seed(datetime.now())
         # Create a single fully-connected layer
         def _layer(input_dim, output_dim, Avgweight=None):
