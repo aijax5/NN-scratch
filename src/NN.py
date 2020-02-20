@@ -37,10 +37,10 @@ class NN:
         for layer in self.network:
             lw=list()
             for node in layer:
-                print("node : ",node)
+                # print("node : ",node)
                 # if type()
                 lw.append(node["weights"])
-            w.append(lw)
+            w.append(np.asarray(lw))
         return w
     
     # ==============================
@@ -56,10 +56,11 @@ class NN:
         # Create a single fully-connected layer
         def _layer(input_dim, output_dim, Avgweight=None):
             layer = []
-            for _ in range(output_dim):
-                if type(Avgweight) == np.ndarray:
+            for index in range(output_dim):
+                if type(Avgweight) == np.ndarray or type(Avgweight) == list:
                     # weights = [ w for w in rx for rx in  ]
-                    weights =sum(Avgweight.tolist(), [])
+                    weights = Avgweight[index].tolist()
+                    # print(weights)
                 else :
                     weights = [random.random() for _ in range(input_dim)] # sample N(0,1)
                 node = {"weights": weights, # list of weights
@@ -143,7 +144,9 @@ class NN:
 
     # Dot product
     def _dotprod(self, a, b):
-        print(a,b,"***^^ \n")
+        if type(a) != list:
+            a=a.tolist()
+        # print(a,b,"***^^ \n")
         return sum([float(a_ )* float(b_) for (a_, b_) in zip(a, b)])
 
     # Sigmoid (activation function)

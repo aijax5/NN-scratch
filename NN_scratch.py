@@ -13,11 +13,11 @@ from src.NN import NN
 import src.utils as utils
 
 # Settings
-csv_filename = "data/seeds_dataset.csv"
-hidden_layers = [3] # number of nodes in hidden layers i.e. [layer1, layer2, ...]
+csv_filename = "data/tennis.csv"
+hidden_layers = [1,2] # number of nodes in hidden layers i.e. [layer1, layer2, ...]
 eta = 0.1 # learning rate
 n_epochs = 100 # number of training epochs
-n_folds = 6 # number of folds for cross-validation
+n_folds = 4 # number of folds for cross-validation
 seed_crossval = 1 # seed for cross-validation
 seed_weights = 1 # seed for NN weight initialization
 
@@ -53,7 +53,7 @@ for i, idx_valid in enumerate(idx_folds):
 
     # Build neural network classifier model and train
     model = NN(input_dim=d, output_dim=n_classes,
-               hidden_layers=hidden_layers, seed=seed_weights)
+               hidden_layers=hidden_layers)
     model.train(X_train, y_train, eta=eta, n_epochs=n_epochs)
 
     # Make predictions for training and test data
