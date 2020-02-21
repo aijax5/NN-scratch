@@ -91,7 +91,7 @@ def get_aggregate_weights(wt):
                 if j==0 and i!=0:
                     # print(new[j],"88",lx)
                     
-                    new[j] = [np.append(new[j],lx)]
+                    new[j]  [np.append(new[j],lx)]
                     # print(len(new[j]),"*******************")
                 else:
                     new[j] = np.add(new[j],lx)
@@ -199,7 +199,7 @@ if __name__ == "__main__" :
     csv_filename = "data/seeds_dataset.csv"
     print("Reading '{}'...".format(csv_filename))
     X, y, n_c = utils.read_csv(csv_filename, target_name="y", normalize=True)
-
+    random.seed(datetime.now())
     config = {
         "n_classes" : n_c,
         "hidden_layers" : [1,2], # number of nodes in hidden layers i.e. [layer1, layer2, ...],
@@ -208,6 +208,7 @@ if __name__ == "__main__" :
         "n_folds" : 6 ,# number of folds for cross-validation,
         "seed" : random.randrange(1,9)
     }
+
     config = Box(config)
     N,d = X.shape
     fold = utils.crossval_folds(N, 5, seed=config.seed) # list of list of fold indices
