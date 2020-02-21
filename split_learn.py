@@ -8,7 +8,7 @@ from datetime import datetime
 # if(__name__ == 'main')
 # Settings
 
-def split_learn(X):
+def split_learn(X,y,modelConfig):
     datasets,features=X.shape
     
     splitWeights=list()
@@ -17,6 +17,14 @@ def split_learn(X):
     print("splits made = ",len(splits))
     for o,oX in enumerate(splits):
         N, d = oX.shape
+
+        hidden_layers = modelConfig.hidden_layers # number of nodes in hidden layers i.e. [layer1, layer2, ...]
+        eta = modelConfig.eta # learning rate
+        n_epochs = modelConfig.n_epochs# number of training epochs
+        n_folds = modelConfig.n_folds# number of folds for cross-validation
+        seed_crossval =modelConfig.seed  # seed for cross-validation
+        n_classes = modelConfig.n_classes
+
 
         print("Neural network model:")
         print(" input_dim = {}".format(d))
@@ -36,7 +44,7 @@ def split_learn(X):
         acc_train, acc_valid = list(), list()
         print("Cross-validating with {} folds...".format(len(idx_folds)))
         for i, idx_valid in enumerate(idx_folds):
-        #  seed=seed_weights
+            #  seed=seed_weights
             # Collect training and test data from folds
             idx_train = np.delete(idx_all, idx_valid)
             X_train, y_train = oX[idx_train], y[idx_train]
@@ -84,7 +92,7 @@ def get_aggregate_weights(wt):
                     # print(new[j],"88",lx)
                     
                     new[j] = [np.append(new[j],lx)]
-                    print(len(new[j]),"*******************")
+                    # print(len(new[j]),"*******************")
                 else:
                     new[j] = np.add(new[j],lx)
                     print(len(new[j]))
@@ -98,12 +106,18 @@ def get_aggregate_weights(wt):
     return new
 
 
-def get_aggregate_model(X,newWeights):
+def get_aggregate_model(shape,newWeights,modelConfig):
     # for oX in enumerate(splits):
     # print("Reading '{}'...".format(csv_filename))
     # X, y, n_classes = utils.read_csv(csv_filename, target_name="y", normalize=True)
-    N, d = X.shape
-
+    N, d = shape
+    #   N, d = X.shape
+    hidden_layers = modelConfig.hidden_layers # number of nodes in hidden layers i.e. [layer1, layer2, ...]
+    eta = modelConfig.eta # learning rate
+    n_epochs = modelConfig.n_epochs# number of training epochs
+    n_folds = modelConfig.n_folds# number of folds for cross-validation
+    seed_crossval =modelConfig.seed  # seed for cross-validation
+    n_classes = modelConfig.n_classes
     print("Neural network model:")
     print(" input_dim = {}".format(d))
     print(" hidden_layers = {}".format(hidden_layers))
@@ -157,6 +171,7 @@ def getGenericNN(X,y,modelConfig):
         # Build neural network classifier model and train
         model = NN(input_dim=d, output_dim=n_classes,
                 hidden_layers=hidden_layers)
+
         model.train(X_train, y_train, eta=eta, n_epochs=n_epochs)
 
         # Make predictions for training and test data
@@ -172,15 +187,16 @@ def getGenericNN(X,y,modelConfig):
             i+1, n_folds, acc_train[-1], acc_valid[-1], len(X_train), len(X_valid)))
 
     # Print results
-    print("""*****************************FINAL GENERIC MODEL RESULTS ********************\n  
-    -> acc_train_avg = {:.2f}%, acc_valid_avg = {:.2f}%""".format(sum(acc_train)/float(len(acc_train)), sum(acc_valid)/float(len(acc_valid))))
+    print("""***************************** GENERIC MODEL TRAINING RESULTS ********************\n  
+    -> acc_train_avg = {:.2f}%, acc_valid_avg = {:.2f}% \n\n""".format(sum(acc_train)/float(len(acc_train)), sum(acc_valid)/float(len(acc_valid))))
     
     return model
 
 
 if __name__ == "__main__" :
     # seed for cross-validation
-    csv_filename = "data/tennis.csv"
+    # csv_filename = "data/tennis.csv"
+    csv_filename = "data/seeds_dataset.csv"
     print("Reading '{}'...".format(csv_filename))
     X, y, n_c = utils.read_csv(csv_filename, target_name="y", normalize=True)
 
@@ -188,13 +204,13 @@ if __name__ == "__main__" :
         "n_classes" : n_c,
         "hidden_layers" : [1,2], # number of nodes in hidden layers i.e. [layer1, layer2, ...],
         "eta" : 0.1, # learning rate,
-        "n_epochs" : 50, # number of training epochs,
-        "n_folds" : 4 ,# number of folds for cross-validation,
-        "seed_crossval" : 1 
+        "n_epochs" : 100, # number of training epochs,
+        "n_folds" : 6 ,# number of folds for cross-validation,
+        "seed" : random.randrange(1,9)
     }
     config = Box(config)
     N,d = X.shape
-    fold = utils.crossval_folds(N, 5, seed=datetime.now()) # list of list of fold indices
+    fold = utils.crossval_folds(N, 5, seed=config.seed) # list of list of fold indices
     valid = random.randrange(0,len(fold))
     validSets = fold[valid]
     allSets = np.arange(0, N)
@@ -203,8 +219,19 @@ if __name__ == "__main__" :
     nX, nY = X[trainSets], y[trainSets]
     vX, vY = X[validSets], y[validSets]
     
-    genericModel = genericModel(nX, nY, config)
-    newModelWeights = split_learn(nX)
+    genericModel = getGenericNN(nX, nY, config)
+    newModelWeights = split_learn(nX,nY,config)
     aggregateWeights = get_aggregate_weights(newModelWeights)
-    newModel = get_aggregate_model(nX,aggregateWeights)
+    newModel = get_aggregate_model(X.shape,aggregateWeights,config)
     print("new weights of the aggreagated model are:", newModel.get_weights())
+    print ( "\n\n running predictions on validation sets held . . . . .  \n\n")
+    pred_generic = genericModel.predict(vX)
+    pred_newModel = newModel.predict(vX)
+
+    acc_generic = 100*np.sum(vY==pred_generic)/len(vY)
+    acc_newModel = 100*np.sum(vY==pred_newModel)/len(vY)
+
+    print("""\n*****************************FINAL VALIDATION RESULTS ********************\n  
+    -> accuracy_genric = {:.2f}%, acc_split_learn = {:.2f}% \n\n""".format(acc_generic,acc_newModel))
+    
+    

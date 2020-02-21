@@ -30,8 +30,8 @@ def read_csv(csv_filename, target_name="y", normalize=False):
     return X, y, n_classes
 
 # Randomly permute [0,N] and extract indices for each fold
-def crossval_folds(N, n_folds):
-    np.random.seed(datetime.now())
+def crossval_folds(N, n_folds,seed):
+    np.random.seed(seed)
     idx_all_permute = np.random.permutation(N)
     N_fold = int(N/n_folds)
     idx_folds = []
