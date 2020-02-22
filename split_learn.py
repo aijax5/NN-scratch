@@ -78,24 +78,24 @@ def split_learn(X,y,modelConfig):
 def get_aggregate_weights(wt):
     new=[]
     
-    print("wth",new)
     rep = copy.deepcopy(wt)
     for i,mx in enumerate(rep):
-        # m2 = wt[i]
         if i==0:
             print("hitting new")
             new = mx
-            print(new[1])
+            new[0] = new[0].tolist()
         else:
             for j,lx in enumerate(mx):
                 if j==0 and i!=0:
-                    # print(new[j],"88",lx)
-                    
-                    new[j]  [np.append(new[j],lx)]
-                    # print(len(new[j]),"*******************")
+                    res =[]
+                    for ni,nx in enumerate(new[j]):
+                        print(nx,"  ** ",lx[ni])
+                        res.append(np.concatenate([nx,lx[ni]]))
+
+                    new [j] =res
                 else:
                     new[j] = np.add(new[j],lx)
-                    print(len(new[j]))
+                    # print(len(new[j]))
 
     for k in range(len(new)):
         if not k == 0:
@@ -103,7 +103,10 @@ def get_aggregate_weights(wt):
             new[k] = np.divide(new[k],len(wt))
             # print(type(l1))
     print( new )
+    if(len(new)):
+        new[0] = np.asarray(new[0])
     return new
+
 
 
 def get_aggregate_model(shape,newWeights,modelConfig):
@@ -202,10 +205,10 @@ if __name__ == "__main__" :
     random.seed(datetime.now())
     config = {
         "n_classes" : n_c,
-        "hidden_layers" : [1,2], # number of nodes in hidden layers i.e. [layer1, layer2, ...],
+        "hidden_layers" : [42,24,12,6], # number of nodes in hidden layers i.e. [layer1, layer2, ...],
         "eta" : 0.1, # learning rate,
-        "n_epochs" : 100, # number of training epochs,
-        "n_folds" : 6 ,# number of folds for cross-validation,
+        "n_epochs" : 1000, # number of training epochs,
+        "n_folds" : 4 ,# number of folds for cross-validation,
         "seed" : random.randrange(1,9)
     }
 
